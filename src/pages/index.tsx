@@ -1,37 +1,43 @@
 import Head from 'next/head'
 import GoogleButton from 'react-google-button'
-import {getAuth, GoogleAuthProvider} from "firebase/auth";
-import {useRouter} from "next/router";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { useRouter } from "next/router";
 import { initializeApp } from 'firebase/app';
+import { getAnalytics } from "firebase/analytics";
 
 // Task 0: Initialize Firebase
-// Replace the following with your app's Firebase project configuration
-// https://firebase.google.com/docs/web/setup
 const firebaseConfig = {
   // Enter your own firebase config here
+  apiKey: "AIzaSyDBRYSXr-s_P1zxw7IVV9JOATazd5xchEc",
+  authDomain: "checkmatehk-dc837.firebaseapp.com",
+  projectId: "checkmatehk-dc837",
+  storageBucket: "checkmatehk-dc837.appspot.com",
+  messagingSenderId: "802545112980",
+  appId: "1:802545112980:web:66ea42445a8a9610f2e181",
+  measurementId: "G-66P3J33Y3K"
 };
 
-// const app = initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+if (typeof window !== "undefined") {
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+}
 
-// GoogleAuthProvider instance
-// const provider = new GoogleAuthProvider();
-// Firebase Auth instance
-// const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+const auth = getAuth(app);
 
 export default function Home() {
-  //Next.js router
   const router = useRouter();
 
-  // Task 1: Implement Google Sign in with Firebase
-  // https://firebase.google.com/docs/auth/web/google-signin
   const signIn = () => {
-    /*
-      1. Use the GoogleAuthProvider to sign in with Firebase
-      2. Use signInWithRedirect to redirect the user to the Google sign in page
-      3. (Optional) Use getRedirectResult to get the result of the redirect and check out what is inside :)
-      4. Redirect the user to the signed-in page using Next.js router
-     */
-
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        console.log(result);
+        router.push('/signed-in');
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 
   return (
@@ -41,22 +47,20 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <div className="container">
-        <main style={{display: 'flex', justifyContent:'center', alignItems:'center', flexDirection: 'column'}}>
+        <main style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
           <h1 className="title">
             Welcome to <a href="https://checkmatehk.io">CheckMate</a>
           </h1>
           <h3>Sign in to see a random programming joke 😳</h3>
 
-          {/* Button for user to sign in with Google */}
-          {/* Task 1: Implement Google Sign in with Firebase */}
           <GoogleButton
             label={'Sign in with Google'}
             type="light"
-            style={{ width: '50%', display:"flex", justifyContent: 'center', alignItems: 'center', fontFamily: 'Roboto, sans-serif', color:'#444' }}
+            style={{ width: '50%', display: "flex", justifyContent: 'center', alignItems: 'center', fontFamily: 'Roboto, sans-serif', color: '#444' }}
             onClick={signIn}
           />
         </main>
       </div>
-      </>
+    </>
   )
 }
